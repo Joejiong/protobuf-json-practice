@@ -1,0 +1,43 @@
+#edit-mode: -*- python -*-
+#coding:gbk
+
+#工作路径.
+WORKROOT('../../../../')
+
+#C预处理器参数.
+CPPFLAGS('-D_GNU_SOURCE -D__STDC_LIMIT_MACROS')
+
+#C/C++编译参数.
+#-fno-omit-frame-pointer
+CPPFLAGS('-g -O2 -pipe -W -Wall -fPIC -fno-omit-frame-pointer -include ../config.h')
+
+#头文件路径.
+INCPATHS('../src')
+INCPATHS('../include ./ ./include $OUT/include $OUT/')
+
+#使用库
+LIBS('$OUT/lib/libjson-pb.a')
+
+#依赖模块
+ImportConfigsFrom('..')
+CONFIGS('baidu/base/iobuf@stable')
+if TARGET_PLATFORM() == 'aarch64':
+    CONFIGS('baidu/third-party/gtest@gtest_V1.10.0.2_ARM_GCC820_K4_GEN_PD_BL@git_tag')
+    CONFIGS('baidu/third-party/openssl@openssl_V1.1.1.3_ARM_GCC820_K4_GEN_PD_BL@git_tag')
+    CONFIGS("baidu/third-party/tcmalloc@tcmalloc_V2.7.0.8_ARM_GCC820_K4_GEN_PD_BL@git_tag",Libraries('output/lib/libprofiler.a'))
+    #链接参数.
+    LDFLAGS('-lpthread -lrt -ldl -fPIC -fopenmp')
+else:
+    CONFIGS('thirdsrc/gtest@gtest_1-7-0-100_PD_BL')
+    CONFIGS('thirdsrc/tcmalloc@2.5.0.5977',Libraries('output/lib/libprofiler.a'))
+    #链接参数.
+    LDFLAGS('-lpthread -lssl -lcrypto -lrt -ldl -lz -fPIC -fopenmp')
+
+PROTOC("../../../../third-64/protobuf/bin/protoc")
+
+HEADERS(GLOB_GEN_SRCS("*.pb.h"), "$INC")
+OUTPUT('jsonout', '$OUT')
+
+#可执行文件
+UTApplication('test_protobuf_json', Sources('test_protobuf_json.cpp addressbook1.proto addressbook.proto message.proto addressbook_encode_decode.proto addressbook_map.proto'))
+UTApplication('test_repeated_field', Sources('test_repeated_field.cpp repeated.proto'))

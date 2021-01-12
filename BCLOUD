@@ -1,0 +1,38 @@
+#edit-mode: -*- python -*-
+#coding:utf-8
+
+WORKROOT('../../../')
+
+COMPILER("gcc82")
+
+# Preprocess flags
+CPPFLAGS('-D_GNU_SOURCE -D__STDC_LIMIT_MACROS -DBAIDU_INTERNAL -include config.h')
+
+# C++ compile falgs
+CPPFLAGS('-g -O2 -pipe -W -Wall -fPIC -fno-omit-frame-pointer -include config.h')
+
+# Head file search path
+INCPATHS('.')
+INCPATHS('src')
+INCPATHS('include')
+
+CONFIGS('baidu/base/common@stable')
+if TARGET_PLATFORM() == 'aarch64':
+    CONFIGS("baidu/third-party/protobuf@protobuf_V2.6.1.400_AARCH64_GCC820_7U6_K4_GEN_PD_BL@git_tag")
+else:
+    CONFIGS('third-64/protobuf@protobuf_2-4-1-1100_PD_BL')
+
+CONFIGS('baidu/third-party/rapidjson@rapidjson_V0.1.0.2_GCC820_6U3_K3_GEN_PD_BL@git_tag')
+#CONFIGS('baidu/third-party/rapidjson@rapidjson_V1.1.0.4_GCC820_4U3_K2_GEN_PD_BL@git_tag')
+#CONFIGS('baidu/third-party/rapidjson@rapidjson_V1.0.2.2_GCC820_4U3_K2_GEN_PD_BL@git_tag')
+#CONFIGS('baidu/third-party/rapid-json@master')
+
+#user_sources=GLOB('src/*.cpp src/rapidjson/*.cpp')
+user_sources=GLOB('src/*.cpp')
+
+StaticLibrary('json-pb', Sources(user_sources))
+
+Directory('test')
+
+HEADERS('./src/*.h', '$INC/')
+HEADERS('./include/*', '$INC/')

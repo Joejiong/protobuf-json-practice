@@ -1,0 +1,34 @@
+#edit-mode: -*- python -*-
+#coding:gbk
+
+#工作路径.
+WORKROOT('../../../../')
+
+#C预处理器参数.
+CPPFLAGS('-D_GNU_SOURCE -D__STDC_LIMIT_MACROS')
+
+#C/C++编译参数.
+#-fno-omit-frame-pointer
+CPPFLAGS('-g -O2 -pipe -W -Wall -fPIC -fno-omit-frame-pointer -include ../config.h')
+
+#头文件路径.
+INCPATHS('../src')
+INCPATHS('../include')
+
+#使用库
+LIBS('../libjson-pb.a')
+
+#链接参数.
+LDFLAGS('-lpthread -lcrypto -lrt -lssl -ldl')
+
+#依赖模块
+ImportConfigsFrom('..')
+CONFIGS('thirdsrc/gtest@gtest_1-7-0-100_PD_BL')
+CONFIGS('baidu/base/iobuf@stable')
+CONFIGS('thirdsrc/tcmalloc@2.5.0.5977',Libraries('output/lib/libprofiler.a'))
+
+PROTOC("../../../../third-64/protobuf/bin/protoc")
+
+#可执行文件
+Application('test_protobuf_json', Sources('test_protobuf_json.cpp addressbook1.proto addressbook.proto message.proto addressbook_encode_decode.proto addressbook_map.proto'))
+Application('test_repeated_field', Sources('test_repeated_field.cpp repeated.proto'))
